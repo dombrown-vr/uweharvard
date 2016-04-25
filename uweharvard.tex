@@ -1,0 +1,177 @@
+%	UWE Harvard BibLaTeX formatting
+%
+%	To use this formatting, store this file in your tex documents 
+%	directory and include \input{uweharvard} in the preamble
+%
+%	Use the \citep{} and \citet{} cite commands
+%
+%	This is pretty incomplete, but formats webpages, articles, 
+%	books, theses, incollections and inproceedings correctly. 
+%	Feel free to add more!
+%
+\usepackage[	natbib = true,
+			sorting=nyt,
+			citestyle = authoryear,
+			bibstyle = authoryear,
+			maxcitenames = 3, 
+			mincitenames = 1,
+			maxbibnames = 99,
+			uniquename = false,
+			uniquelist = false,
+			firstinits = true
+			]
+			{biblatex}
+
+\defbibenvironment{bibliography}
+{\list
+	{}
+	{\setlength{\leftmargin}{\bibhang}%
+	\setlength{\itemindent}{-\leftmargin}%
+	\setlength{\itemsep}{\bibitemsep}%
+	\setlength{\parsep}{\bibparsep}}}
+	{\endlist}
+	{\item}
+	
+\newbibmacro*{begentry}{}
+\newbibmacro*{finentry}{\adddot}
+
+\DefineBibliographyStrings{english}{%
+    andothers = {\em et\addabbrvspace al\adddot}
+}
+
+%\DeclareBibliographyDriver{}{%
+%	\usebibmacro{begentry}
+%	
+%	\usebibmacro{finentry}
+%}
+\DeclareFieldFormat{edition}%
+                   {\ifinteger{#1}%
+                    {\mkbibordedition{#1}\addthinspace{}ed.}%
+                    {#1\isdot}}
+                    
+\DeclareNameAlias{sortname}{last-first}
+\DeclareFieldFormat[book,article,inproceedings,thesis,incollection,webpage]{year}{\mkbibparens{#1}}
+\DeclareFieldFormat[thesis]{title}{\emph{#1}}
+\DeclareFieldFormat[inproceedings,article,incollection]{title}{#1}
+\DeclareFieldFormat[inproceedings, incollection]{booktitle}{\emph{#1}}
+\DeclareFieldFormat[article]{journaltitle}{\emph{#1}}
+\DeclareFieldFormat[webpage]{title}{\emph{#1}}
+\DeclareFieldFormat[webpage]{url}{\printtext{Available From: }\url{#1}}
+\DeclareFieldFormat[webpage]{note}{\mkbibbrackets{#1}}
+\DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
+
+\DefineBibliographyStrings{english}{%
+	page={\printtext{p.}},
+	pages={\printtext{pp.}}
+}
+
+
+\DeclareBibliographyDriver{webpage}{%
+	\usebibmacro{begentry}
+	\printnames{author}
+	\newunit
+	\printlist{organization}
+	\setunit*{\addspace}\newblock
+	\printfield{year}
+	\setunit*{\addspace}
+	\printfield{title}
+	\newunit\newblock
+	\printfield{url}
+	\setunit*{\addspace}\newblock
+	\printfield{note}
+	\usebibmacro{finentry}
+}
+
+\DeclareBibliographyDriver{incollection}{%
+	\usebibmacro{begentry}
+	\printnames{author}%
+	\newunit
+	\printfield{year}%
+	\setunit*{\addspace}
+	\printfield{title}
+	\newunit\newblock
+	\printtext{In: }
+	\printfield{booktitle}
+	\newunit\newblock
+	\printfield{pages}
+	\newunit\newblock
+	\printlist{location}
+	\setunit*{\addcolon\addspace}
+	\printlist{publisher}
+	\usebibmacro{finentry}
+}
+
+\DeclareBibliographyDriver{thesis}{%
+	\usebibmacro{begentry}
+	\printnames{author}%
+	\newunit
+	\printfield{year}%
+	\setunit*{\addspace}
+	\printfield{title}
+	\newunit
+	\printfield{type}
+	\setunit*{\addcomma\addspace}
+	\printlist{institution}
+	\usebibmacro{finentry}
+}
+
+\DeclareBibliographyDriver{article}{%
+	\usebibmacro{begentry}
+	\printnames{author}%
+	\newunit
+	\printfield{year}%
+	\setunit*{\addspace}
+	\newblock
+	\printfield{title}%
+	\newunit\newblock
+	\printfield{journaltitle}%
+	\newunit
+	\printfield{volume}%
+	\setunit*{\addspace}
+	\printfield{number}%
+	\setunit*{\addcomma\addspace}
+	\printfield{pages}%
+	\usebibmacro{finentry}	
+}
+
+\DeclareBibliographyDriver{book}{%
+	\usebibmacro{begentry}
+	\printnames{author}%
+	\newunit
+	\printfield{year}%
+	\setunit*{\addspace}
+	\newblock
+	\printfield{title}%
+	\newunit\newblock
+	\printfield{edition}
+	\newunit
+	\printlist{location}%
+	\setunit*{\addcolon\addspace}
+	\printlist{publisher}%
+	\usebibmacro{finentry}}
+	
+\DeclareBibliographyDriver{inproceedings}{%
+	\usebibmacro{begentry}
+	\printnames{author}%
+	\newunit
+	\printfield{year}%
+	\setunit*{\addspace}\newblock
+	\printfield{title}%
+	\newunit\newblock
+	\printtext{In: }
+	\printnames{editor}%
+	\newunit\newblock
+	\printfield{booktitle}%
+	\newunit\newblock
+	\printlist{location}%
+	\setunit*{\addcomma\addspace}
+	\printfield{day}%
+	\setunit*{\addspace}
+	\printfield{month}
+	\setunit*{\addspace}
+	\printfield{labelyear}%
+	\newunit
+	\printlist{publisher}%
+	\newunit\newblock
+	\printfield{pages}
+	\usebibmacro{finentry}}
