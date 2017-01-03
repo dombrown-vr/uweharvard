@@ -1,15 +1,18 @@
 %	UWE Harvard BibLaTeX formatting
 %
 %	To use this formatting, store this file in your tex documents 
-%	directory and include \input{uweharvard} in the preamble
+%	directory and include \input{uweharvard} in the preamble, and use \addbibresource{•} and \printbibliography in your document.
+%
+%   Make sure to run biber instead of bibtex.
+%	In texmaker, go to Preferences -> Commands, change the Bib(la)tex field from "bibtex" % to "biber" %
 %
 %	Use the \citep{} and \citet{} cite commands
 %
-%	This is pretty incomplete, but formats webpages, articles, 
+%	This is incomplete, but formats webpages, articles, 
 %	books, theses, incollections and inproceedings correctly. 
 %	Feel free to add more!
 %
-\usepackage[	natbib = true,
+\usepackage[natbib = true,
 			sorting=nyt,
 			citestyle = authoryear,
 			bibstyle = authoryear,
@@ -18,7 +21,9 @@
 			maxbibnames = 99,
 			uniquename = false,
 			uniquelist = false,
-			firstinits = true
+			firstinits = true,
+			backend = biber,
+			date = long
 			]
 			{biblatex}
 
@@ -44,25 +49,44 @@
 %	
 %	\usebibmacro{finentry}
 %}
+
+\DeclareSourcemap{
+	\maps[datatype=bibtex]{
+		\map{
+			\pertype{inbook}
+			\step[fieldsource=bookyear,fieldtarget=note]		
+		}	
+	}
+}
+
 \DeclareFieldFormat{edition}%
                    {\ifinteger{#1}%
-                    {\mkbibordedition{#1}\addthinspace{}ed.}%
+                    {\ifnumequal{#1}{1}
+                    {}
+                    {\mkbibordedition{#1}\addthinspace{}ed.}}%
                     {#1\isdot}}
                     
 \DeclareNameAlias{sortname}{last-first}
-\DeclareFieldFormat[book,article,inproceedings,thesis,incollection,webpage]{year}{\mkbibparens{#1}}
+\DeclareFieldFormat[book,article,inproceedings,thesis,incollection,webpage,inbook]{year}{\mkbibparens{#1}}
+\DeclareFieldFormat[inbook]{note}{\mkbibparens{#1}}
 \DeclareFieldFormat[thesis]{title}{\emph{#1}}
 \DeclareFieldFormat[inproceedings,article,incollection]{title}{#1}
-\DeclareFieldFormat[inproceedings, incollection]{booktitle}{\emph{#1}}
+\DeclareFieldFormat[inproceedings, incollection]{booktitle}{\printtext{In:}\addspace\emph{#1}}
+\DeclareFieldFormat[inbook]{title}{\emph{#1}}
+\DeclareFieldFormat{chapter}{#1}
 \DeclareFieldFormat[article]{journaltitle}{\emph{#1}}
 \DeclareFieldFormat[webpage]{title}{\emph{#1}}
-\DeclareFieldFormat[webpage]{url}{\printtext{Available From: }\url{#1}}
+\DeclareFieldFormat[webpage]{url}{\printtext{Available From:}\addspace\url{#1}}
 \DeclareFieldFormat[webpage]{note}{\mkbibbrackets{#1}}
 \DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
 
+\DeclareFieldFormat{language}{\printtext{Translated from }\addspace{#1}}
+\DeclareFieldFormat{translator}{\printtext{by }\addspace{#1}}
+
+
 \DefineBibliographyStrings{english}{%
 	page={\printtext{p.}},
-	pages={\printtext{pp.}}
+	pages={\printtext{pp.}},
 }
 
 
@@ -82,6 +106,29 @@
 	\usebibmacro{finentry}
 }
 
+\DeclareBibliographyDriver{inbook}{%
+	\usebibmacro{begentry}
+	\printnames{author}
+	\newunit
+	\printfield{year}
+	\setunit*{\addspace}\newblock
+	\printfield{chapter}
+	\newunit\newblock
+	\printtext{In:}\addspace
+	\printnames{editor}
+	\newunit
+	\printfield{note}
+	\setunit*{\addspace}
+	\printfield{title}
+	\newunit\newblock
+	\printlist{location}
+	\setunit*{\addcolon\addspace}
+	\printlist{publisher}
+	\newunit
+	\printfield{pages}
+	\usebibmacro{finentry}
+}
+
 \DeclareBibliographyDriver{incollection}{%
 	\usebibmacro{begentry}
 	\printnames{author}%
@@ -90,7 +137,6 @@
 	\setunit*{\addspace}
 	\printfield{title}
 	\newunit\newblock
-	\printtext{In: }
 	\printfield{booktitle}
 	\newunit\newblock
 	\printfield{pages}
@@ -143,6 +189,9 @@
 	\newblock
 	\printfield{title}%
 	\newunit\newblock
+	%\printlist{language}%
+	%\printfield{translator}%
+	%\newunit\newblock
 	\printfield{edition}
 	\newunit
 	\printlist{location}%
@@ -158,7 +207,6 @@
 	\setunit*{\addspace}\newblock
 	\printfield{title}%
 	\newunit\newblock
-	\printtext{In: }
 	\printnames{editor}%
 	\newunit\newblock
 	\printfield{booktitle}%
